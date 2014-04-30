@@ -1,0 +1,13 @@
+Register for the Razer developer program here:
+http://developer.razerzone.com/forum/register.php
+
+Download the SDK from here:
+http://developer.razerzone.com/forum/showthread.php?12-Razer-SDK-download
+
+Put the following headers in this directory from the SDK:
+================================
+SwitchBlade.h
+SwitchBladeSdk.h
+SwitchBladeSdk_defines.h
+SwitchBladeSdk_errors.h
+SwitchBladeSdk_types.h

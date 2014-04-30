@@ -1,0 +1,12 @@
+Tiny3D
+Copyright (c) Mihail Szabolcs
+
+The Tiny3D is an Winamp Visualizer Framework using the OpenGL API. I wrote it in the last few days, because I wanted to do a quick visualizer (love) demo -- but at the same time, I wanted to be able to re-use the code for possible other demos, so this is how the Tiny3D framework was born.
+
+It is written in C, so you can integrate it into your C++ projects easily. A conversion to C# wouldn't be too hard ... eh, maybe I will do it, if someone will be interested.
+
+Will compile with Visual C++ Express 2005 (most probably also 2008), and GCC ... at least I tested with these too ... possibly others.
+
+Don't expect too much ... but it definitely does the job for me :)) This should have his own Wiki page, but it's OK for now I guess :P
+
+The available "package" also contains the demo. Enjoy :) 

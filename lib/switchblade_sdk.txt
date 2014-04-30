@@ -1,0 +1,9 @@
+Register for the Razer developer program here:
+http://developer.razerzone.com/forum/register.php
+
+Download the SDK from here:
+http://developer.razerzone.com/forum/showthread.php?12-Razer-SDK-download
+
+Put the following binaries in this directory from the SDK:
+================================
+RzSwitchbladeSDK2.lib

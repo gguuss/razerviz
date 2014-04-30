@@ -1,3 +1,8 @@
+This project is based upon the Tiny3D project (See README.Tiny3d). That 
+project is currently released under the GNU Public license. However, any code
+that I author that is not protected or owned under that license is hereby
+released under the following compatible license:
+
 The MIT License (MIT)
 
 Copyright (c) 2014 Gus Class

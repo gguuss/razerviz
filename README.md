@@ -31,14 +31,14 @@ See the demo in action: http://youtu.be/ivSlJcQnS0o
     http://developer.razerzone.com/forum/showthread.php?12-Razer-SDK-download
 3. Put the following binaries in the local ./lib directory from the SDK lib folder:
     RzSwitchbladeSDK2.lib
-4. Put the following binaries in the local ./include directory from the SDK include folder
-Put the following headers in this directory from the SDK:
-- SwitchBlade.h
-- SwitchBladeSdk.h
-- SwitchBladeSdk_defines.h
-- SwitchBladeSdk_errors.h
-- SwitchBladeSdk_types.h
+4. Put the following binaries in the local ./include directory from the SDK include folder:
+    - SwitchBlade.h
+    - SwitchBladeSdk.h
+    - SwitchBladeSdk_defines.h
+    - SwitchBladeSdk_errors.h
+    - SwitchBladeSdk_types.h
 
+#### Build steps ####
 
   1. Clone the project.
   2. Open the solution file, RazerVizDemo.sln, from the project folder.
@@ -46,7 +46,7 @@ Put the following headers in this directory from the SDK:
   3. Click the Build button or press Ctrl+Shift+B
   4. The project will compile and, if it builds successfully, the plugin will be copied to your winamp plugins directory.
   
-### Troubleshooting ###
+#### Troubleshooting ####
   1. If you're having trouble during the Linker steps, try this: Right click on the project -> Properties, select Configuration Properties -> Linker -> Input and set it to: `kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)`
   
 

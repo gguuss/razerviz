@@ -74,7 +74,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         case RZSBSDK_DK_6:
             // Back
             // VK_MEDIA_PREV_TRACK
-            /*keyCode.type = INPUT_KEYBOARD;
+            // UNSTABLE
+            keyCode.type = INPUT_KEYBOARD;
             keyCode.ki.wScan = 0;
             keyCode.ki.wVk = VK_MEDIA_PREV_TRACK;
             keyCode.ki.time = 0;
@@ -83,7 +84,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             SendInput(1, &keyCode, sizeof(INPUT));
 
             keyCode.ki.dwFlags = KEYEVENTF_KEYUP;
-            SendInput(1, &keyCode, sizeof(INPUT));*/
+            SendInput(1, &keyCode, sizeof(INPUT));
+            // END UNSTABLE
 		    break;
         case RZSBSDK_DK_7:
             // Play
@@ -217,15 +219,15 @@ int visInit(struct winampVisModule *this_mod)
     RzSBStart();
 
     // Next time use noun project
-    /*
-    LoadKeyImageToRazer("C:\\Users\\Gus\\code\\tiny3dmess\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("C:\\Users\\Gus\\code\\tiny3dmess\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("C:\\Users\\Gus\\code\\tiny3dmess\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("C:\\Users\\Gus\\code\\tiny3dmess\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("C:\\Users\\Gus\\code\\tiny3dmess\\imagedata\\voldown.png",RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+    // UNSTABLE
+    LoadKeyImageToRazer("imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer("imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer("imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer("imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer("imagedata\\voldown.png",RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
 
     RzSBDynamicKeySetCallback(OnDkClickedButton);
-    */
+    // END UNSTABLE
 
 	return 0;
 }

@@ -75,6 +75,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             // Back
             // VK_MEDIA_PREV_TRACK
             // UNSTABLE
+            /*
             keyCode.type = INPUT_KEYBOARD;
             keyCode.ki.wScan = 0;
             keyCode.ki.wVk = VK_MEDIA_PREV_TRACK;
@@ -85,6 +86,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
 
             keyCode.ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(1, &keyCode, sizeof(INPUT));
+            */
+            // TODO: Can this be done with a winamp library?
             // END UNSTABLE
 		    break;
         case RZSBSDK_DK_7:
@@ -220,6 +223,8 @@ int visInit(struct winampVisModule *this_mod)
 
     // Next time use noun project
     // UNSTABLE
+    // TODO: Are these images correctly getting added as a DLL resource?
+    /*
     LoadKeyImageToRazer("imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
     LoadKeyImageToRazer("imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
     LoadKeyImageToRazer("imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
@@ -227,6 +232,7 @@ int visInit(struct winampVisModule *this_mod)
     LoadKeyImageToRazer("imagedata\\voldown.png",RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
 
     RzSBDynamicKeySetCallback(OnDkClickedButton);
+    */
     // END UNSTABLE
 
 	return 0;

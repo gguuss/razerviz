@@ -1,3 +1,5 @@
+*.sln
+*.suo
 *.sdf
 *.opensdf
 *.user

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="LoveDemo"
+	Name="RazerVizDemo"
 	ProjectGUID="{3ABCBB6F-BB00-4DA4-AB70-9B14B7B98D7E}"
-	RootNamespace="LoveDemo"
+	RootNamespace="RazerVizDemo"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

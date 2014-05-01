@@ -13,6 +13,12 @@ See the demo in action: http://youtu.be/ivSlJcQnS0o
 ##Usage##
 
 ###Playback###
+I'm not certain of this but you most likely will need to have the Razer SwitchBlade SDK 
+to begin. Please comment if the plugin works for you without the SDK.
+
+**Warning** This plugin will invariably crash Winamp and is tempermental. Learn how
+to recover WinAmp by removing plugins or setting Winamp to safe mode before you try 
+running the plugin.
 
   1. Copy RazerVizDemo.dll into your Winamp Plugins 
   2. Open Winamp

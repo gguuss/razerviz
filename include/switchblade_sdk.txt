@@ -1,8 +1,5 @@
 Register for the Razer developer program here:
-http://developer.razerzone.com/forum/register.php
-
-Download the SDK from here:
-http://developer.razerzone.com/forum/showthread.php?12-Razer-SDK-download
+http://www.razerzone.com/press/detail/press-releases/razer-software-development-kit-for-switchblade-ui-now-available
 
 Put the following headers in this directory from the SDK:
 ================================

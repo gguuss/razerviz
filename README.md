@@ -24,6 +24,22 @@ See the demo in action: http://youtu.be/ivSlJcQnS0o
 
 ### Compiling ###
 
+#### Prerequisites ####
+1. Register for the Razer developer program here:
+    http://developer.razerzone.com/forum/register.php
+2. Download the SDK from here:
+    http://developer.razerzone.com/forum/showthread.php?12-Razer-SDK-download
+3. Put the following binaries in the local ./lib directory from the SDK lib folder:
+    RzSwitchbladeSDK2.lib
+4. Put the following binaries in the local ./include directory from the SDK include folder
+Put the following headers in this directory from the SDK:
+- SwitchBlade.h
+- SwitchBladeSdk.h
+- SwitchBladeSdk_defines.h
+- SwitchBladeSdk_errors.h
+- SwitchBladeSdk_types.h
+
+
   1. Clone the project.
   2. Open the solution file, RazerVizDemo.sln, from the project folder.
   3. Make sure the project is set to release.

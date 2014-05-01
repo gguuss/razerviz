@@ -28,7 +28,7 @@ void drawHeart(float x, float y, float z, bool smaller, bool rotate, int num);
 void visConfig(struct winampVisModule *this_mod)
 {
 	//TOOD: add specific configuration stuff here (e.g show an nice dialog, etc)
-	MessageBox(this_mod->hwndParent,"Nothing to configure.","Configuration",MB_OK | MB_ICONINFORMATION);
+    MessageBox(this_mod->hwndParent,"Nothing to configure.","Configuration",MB_OK | MB_ICONINFORMATION);
 }
 
 
@@ -118,12 +118,12 @@ int visInit(struct winampVisModule *this_mod)
 	PIXELFORMATDESCRIPTOR pfd;
 	int nPixelFormat;
 
-	//getVisInstance()->myWindowState.flags |= EMBED_FLAGS_NOTRANSPARENCY;   
-	//getVisInstance()->myWindowState.r.left		= 0;
-	//getVisInstance()->myWindowState.r.top		= 0;
-	//getVisInstance()->myWindowState.r.right		= VIS_SCENE_WIDTH;
-	//getVisInstance()->myWindowState.r.bottom	= VIS_SCENE_HEIGHT;
-     
+	getVisInstance()->myWindowState.flags |= EMBED_FLAGS_NOTRANSPARENCY;   
+	getVisInstance()->myWindowState.r.left		= 0;
+	getVisInstance()->myWindowState.r.top		= 0;
+	getVisInstance()->myWindowState.r.right		= VIS_SCENE_WIDTH;
+	getVisInstance()->myWindowState.r.bottom	= VIS_SCENE_HEIGHT;
+   
 	*(void**)&e = (void *)SendMessage(this_mod->hwndParent,WM_WA_IPC,(LPARAM)0,IPC_GET_EMBEDIF);
 
 	if (!e)
@@ -134,7 +134,7 @@ int visInit(struct winampVisModule *this_mod)
 
 	parent = e(&getVisInstance()->myWindowState);
 
-	//SetWindowText(getVisInstance()->myWindowState.me, this_mod->description);
+	SetWindowText(getVisInstance()->myWindowState.me, this_mod->description);
 	
 	memset(&wc,0,sizeof(wc));
 	wc.lpfnWndProc = WndProc;
@@ -150,7 +150,7 @@ int visInit(struct winampVisModule *this_mod)
 	styles = WS_VISIBLE|WS_CHILDWINDOW|WS_OVERLAPPED|WS_CLIPCHILDREN|WS_CLIPSIBLINGS;
 	styles|= CS_HREDRAW | CS_VREDRAW | CS_OWNDC; //add more
 
-	/*getVisInstance()->hWnd = CreateWindowEx(
+	getVisInstance()->hWnd = CreateWindowEx(
 		0,
 		VIS_USER_CLASS,
 		NULL,
@@ -168,7 +168,7 @@ int visInit(struct winampVisModule *this_mod)
 		return 1;
 	}
 
-	//SetWindowLong(getVisInstance()->hWnd,GWL_USERDATA,(LONG)this_mod); 
+	SetWindowLong(getVisInstance()->hWnd,GWL_USERDATA,(LONG)this_mod); 
 	SendMessage(this_mod->hwndParent, WM_WA_IPC, (WPARAM)getVisInstance()->hWnd, IPC_SETVISWND);
 
 	// Enable OpenGL on the created Window
@@ -177,7 +177,6 @@ int visInit(struct winampVisModule *this_mod)
 		return 1;
 	}
 
-    /*
 	memset(&pfd,0,sizeof(pfd));
 	pfd.nSize      = sizeof(pfd);
 	pfd.nVersion   = 1;
@@ -210,13 +209,11 @@ int visInit(struct winampVisModule *this_mod)
 
 	// setup the perspective :P
 	resizeGLWindow(VIS_SCENE_HEIGHT,VIS_SCENE_WIDTH);
-    */
 	// show the window
-	//ShowWindow(parent,SW_SHOWNORMAL);
+	ShowWindow(parent,SW_SHOWNORMAL);
 
-    /*
-	initScene( getVisInstance() );
-    */
+    
+	initScene( getVisInstance() );    
     RzSBStart();
 
     // Next time use noun project
@@ -465,9 +462,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 /* DEMO IMPLEMENTATION */
 void initScene(winampGLVisualizer *this_inst)
 {
-    /*
-	glEnable(GL_NORMALIZE);
 
+
+    glEnable(GL_NORMALIZE);
+    /*
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, heart_mat);
 	
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);

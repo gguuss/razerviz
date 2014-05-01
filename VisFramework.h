@@ -48,9 +48,9 @@
 #include "common.h"
 
 // TODO: change these as needed
-#define VIS_USER_TITLE "Love Demo"
-#define VIS_USER_MODULE_TITLE "Love Demo Module"
-#define VIS_USER_CLASS "LoveDemo"
+#define VIS_USER_TITLE "Razer Visualization Demo"
+#define VIS_USER_MODULE_TITLE "Razer Visualization Demo Module"
+#define VIS_USER_CLASS "RazerVizDemo"
 
 #define VIS_HDRVER 0x101
 

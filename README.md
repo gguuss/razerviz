@@ -59,6 +59,10 @@ running the plugin.
 Changes:
 =========
 
+**05.04.2014**
+- Determined wasn't allocating sufficient memory for track shifts, fixed!
+- Added debug color spectrums for visualizer above viz loop
+
 **05.01.2014**
 
 - Updated to skeleton project

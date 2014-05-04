@@ -275,7 +275,7 @@ unsigned short __inline COLORFROMROW(int row)
     if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
         return ARGB2RGB565( (int)
             ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
-            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 24)
+            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
         );
     }
     return ARGB2RGB565(0);
@@ -284,7 +284,7 @@ unsigned short __inline COLORFROMROW(int row)
     if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
         return ARGB2RGB565( (int)
             ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
-            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 8)
+            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
         );
     }
     return ARGB2RGB565(0);
@@ -325,7 +325,7 @@ int visRender(struct winampVisModule *this_mod)
     size_t sNumPixels;
 
     //divLimit = SWITCHBLADE_TOUCHPAD_X_SIZE / DIVS;
-    limitBuffer = (int*)malloc(sizeof(int) * divCount);
+    limitBuffer = (int*)malloc(sizeof(int) * divLimit);
     rows += rowsDir;
     DIVSCALE = 576 / divLimit;
 

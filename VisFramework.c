@@ -51,6 +51,9 @@ void LoadKeyImageToRazer(const char * filename, RZSBSDK_DKTYPE targetKey, RZSBSD
 ////////////////////////////////////////////////////////////////////
 // DK button
 /////////////////////////////////////////////////////////////////////
+
+// TODO: Can this be done with a winamp library?
+/*
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
 {	
     INPUT keyCode;
@@ -75,7 +78,6 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             // Back
             // VK_MEDIA_PREV_TRACK
             // UNSTABLE
-            /*
             keyCode.type = INPUT_KEYBOARD;
             keyCode.ki.wScan = 0;
             keyCode.ki.wVk = VK_MEDIA_PREV_TRACK;
@@ -86,9 +88,6 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
 
             keyCode.ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(1, &keyCode, sizeof(INPUT));
-            */
-            // TODO: Can this be done with a winamp library?
-            // END UNSTABLE
 		    break;
         case RZSBSDK_DK_7:
             // Play
@@ -109,6 +108,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
 	}
     return S_OK;
 }
+*/
+
 
 int visInit(struct winampVisModule *this_mod)
 {
@@ -255,8 +256,13 @@ unsigned short __inline ARGB2RGB565(int x)
 	return rgb565;
 }
 
+#undef STDCOLORS
+#undef REDCOLOR
+#define BLUECOLOR
+
 unsigned short __inline COLORFROMROW(int row)
-{       
+{
+    #ifdef STDCOLORS
     if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
         return ARGB2RGB565( (int)
             ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
@@ -264,6 +270,25 @@ unsigned short __inline COLORFROMROW(int row)
         );
     }
     return ARGB2RGB565(0);
+    #endif
+    #ifdef REDCOLOR
+    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+        return ARGB2RGB565( (int)
+            ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
+            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 24)
+        );
+    }
+    return ARGB2RGB565(0);
+    #endif
+    #ifdef BLUECOLOR
+    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+        return ARGB2RGB565( (int)
+            ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
+            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 8)
+        );
+    }
+    return ARGB2RGB565(0);
+    #endif
 }
 
 int visRender(struct winampVisModule *this_mod)
@@ -385,7 +410,7 @@ int visRender(struct winampVisModule *this_mod)
 	// Send the stream and render the buffer
     ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_WIDGET, &bp);
 
-    //SwapBuffers(getVisInstance()->hDC);
+    SwapBuffers(getVisInstance()->hDC);
 
     free(g_rgb565);
     //TODO: render stuff to the keys!
@@ -399,12 +424,12 @@ void visQuit(struct winampVisModule *this_mod)
 	shutdownScene();
 
 	// disable OpenGL
-	//wglMakeCurrent(NULL,NULL);
-	//wglDeleteContext(getVisInstance()->hRC);
-	//ReleaseDC(getVisInstance()->hWnd,getVisInstance()->hDC);
+	wglMakeCurrent(NULL,NULL);
+	wglDeleteContext(getVisInstance()->hRC);
+	ReleaseDC(getVisInstance()->hWnd,getVisInstance()->hDC);
 
 	getVisInstance()->hDC = NULL;
-	//getVisInstance()->hRC = NULL;
+	getVisInstance()->hRC = NULL;
 
 	// de-init Win32 stuff
 	SendMessage(this_mod->hwndParent, WM_WA_IPC, 0, IPC_SETVISWND);

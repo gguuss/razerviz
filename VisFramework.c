@@ -325,9 +325,9 @@ unsigned short __inline COLORFROMROW(int row)
     } else  if (colormode == 2){        
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 10) | 
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) ) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16)
             );
         }
         return ARGB2RGB565(0);

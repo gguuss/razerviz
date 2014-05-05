@@ -73,12 +73,14 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
 		    colormode = 2;
             break;
         case RZSBSDK_DK_4:
+            colormode = 3;
 		    break;
         case RZSBSDK_DK_5:
+            colormode = 4;
 		    break;
         case RZSBSDK_DK_6:
             // poor man's debounce
-            if (lastinput != RZSBSDK_DK_6){
+            if (keystate != RZSBSDK_KEYSTATE_UP){
                 // Back
                 keyCode.type = INPUT_KEYBOARD;
                 keyCode.ki.wScan = 0;
@@ -90,7 +92,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             }            
 		    break;
         case RZSBSDK_DK_7:
-            if (lastinput != RZSBSDK_DK_7){
+            if (keystate != RZSBSDK_KEYSTATE_UP){
                 // Play / Pause  
                 keyCode.type = INPUT_KEYBOARD;
                 keyCode.ki.wScan = 0;            
@@ -103,7 +105,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
 		    break;
         case RZSBSDK_DK_8:
             // Fast FW
-            if (lastinput != RZSBSDK_DK_8){
+            if (keystate != RZSBSDK_KEYSTATE_UP){
                 keyCode.type = INPUT_KEYBOARD;
                 keyCode.ki.wScan = 0;            
                 keyCode.ki.wVk = 0x42; // b key
@@ -116,7 +118,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         case RZSBSDK_DK_9:
             // VOL_UP
             // SIMULATE MOUSE WHEEL UP
-            if (lastinput != RZSBSDK_DK_9){
+            if (keystate != RZSBSDK_KEYSTATE_UP){
                 INPUT in;
                 in.type = INPUT_MOUSE;
                 in.mi.dx = 0;
@@ -131,7 +133,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         case RZSBSDK_DK_10:
             // VOLDOWN
 		    // SIMULATE MOUSE WHEEL DOWN                        
-            if (lastinput != RZSBSDK_DK_9){
+            if (keystate != RZSBSDK_KEYSTATE_UP){
                 INPUT in;
                 in.type = INPUT_MOUSE;
                 in.mi.dx = 0;
@@ -320,6 +322,23 @@ unsigned short __inline COLORFROMROW(int row)
             );
         }
         return ARGB2RGB565(0);
+    } else  if (colormode == 2){        
+        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+            );
+        }
+        return ARGB2RGB565(0);
+    } else if (colormode == 3) {        
+        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+            );
+        }
+        return ARGB2RGB565(0);
     } else {        
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
@@ -450,9 +469,10 @@ int visRender(struct winampVisModule *this_mod)
 
     SwapBuffers(getVisInstance()->hDC);
 
-    free(g_rgb565);
     //TODO: render stuff to the keys!
-    //ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_DK_1, &bp);
+    ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_DK_1, &bp);
+    free(g_rgb565);
+
   
 	return 0;
 }

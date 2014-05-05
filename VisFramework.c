@@ -308,7 +308,7 @@ unsigned short __inline COLORFROMROW(int row)
     if (colormode == 0){
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 0) | 
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
             );
         }
@@ -317,7 +317,7 @@ unsigned short __inline COLORFROMROW(int row)
     
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
             );
         }
@@ -325,8 +325,8 @@ unsigned short __inline COLORFROMROW(int row)
     } else  if (colormode == 2){        
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 10) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) ) | 
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
             );
         }
@@ -334,15 +334,15 @@ unsigned short __inline COLORFROMROW(int row)
     } else if (colormode == 3) {        
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 8)
             );
         }
         return ARGB2RGB565(0);
     } else {        
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
             );
         }
@@ -485,7 +485,7 @@ void visQuit(struct winampVisModule *this_mod)
 	ReleaseDC(getVisInstance()->hWnd,getVisInstance()->hDC);
 
 	getVisInstance()->hDC = NULL;
-	getVisInstance()->hRC = NULL;
+	getVisInstance()->hRC = NULL;    
 
 	// de-init Win32 stuff
 	SendMessage(this_mod->hwndParent, WM_WA_IPC, 0, IPC_SETVISWND);

@@ -3,7 +3,7 @@
 This is my attempt to create a Winamp visualization that works with
 the Razer Deathstriker Ultimate keyboard.
 
-It's based upon the [Tiny3D Winamp visualization](tiny3d) framework and 
+It's based upon the [Tiny3D Winamp visualization](tiny3d) framework and
 is in a state where it is rather... unstable. The project renders
 the graphic equalizer to the keyboard screen and has hooks for using
 media keys to control Winamp.
@@ -13,14 +13,14 @@ See the demo in action: http://youtu.be/ivSlJcQnS0o
 ##Usage##
 
 ###Playback###
-I'm not certain of this but you most likely will need to have the Razer SwitchBlade SDK 
+I'm not certain of this but you most likely will need to have the Razer SwitchBlade SDK
 to begin. Please comment if the plugin works for you without the SDK.
 
 **Warning** This plugin will invariably crash Winamp and is tempermental. Learn how
-to recover WinAmp by removing plugins or setting Winamp to safe mode before you try 
+to recover WinAmp by removing plugins or setting Winamp to safe mode before you try
 running the plugin.
 
-  1. Copy RazerVizDemo.dll into your Winamp Plugins 
+  1. Copy RazerVizDemo.dll into your Winamp Plugins
   2. Open Winamp
   3. Select Options -> Visualization -> Select Plugin
   4. Return to your media library and select a song before enabling the plugin
@@ -51,17 +51,18 @@ running the plugin.
   3. Make sure the project is set to release.
   3. Click the Build button or press Ctrl+Shift+B
   4. The project will compile and, if it builds successfully, the plugin will be copied to your winamp plugins directory.
-  
+
 #### Troubleshooting ####
   1. If you're having trouble during the Linker steps, try this: Right click on the project -> Properties, select Configuration Properties -> Linker -> Input and set it to: `kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)`
-  
+
 
 Changes:
 =========
-
 **05.04.2014**
 - Determined wasn't allocating sufficient memory for track shifts, fixed!
 - Added debug color spectrums for visualizer above viz loop
+- DK1 through DK5 (the LCD keys on the bottom) switch plugin colors
+- [See YouTube demo of keyboard / trackpad working](YTDemo3)
 
 **05.01.2014**
 
@@ -73,3 +74,4 @@ Initial creation
 
 
 [tiny3d]: https://github.com/icebreaker/tiny3d/
+[YTDemo3]: http://youtu.be/3S0_FtytXCk

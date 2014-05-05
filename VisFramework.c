@@ -16,12 +16,6 @@
 #include "demo.h"
 #include "include\SwitchBlade.h"
 
-/* DEMO PROTOTYPES */
-void initScene(winampGLVisualizer *this_inst);
-void shutdownScene();
-void renderScene(struct winampVisModule *this_mod);
-
-
 void drawHeart(float x, float y, float z, bool smaller, bool rotate, int num);
 /* DEMO PROTOTYPES */
 
@@ -52,70 +46,117 @@ void LoadKeyImageToRazer(const char * filename, RZSBSDK_DKTYPE targetKey, RZSBSD
 // DK button
 /////////////////////////////////////////////////////////////////////
 
+
+// TODO: MARK AS GLOBAL
+HWND parent = NULL; // our parent window's handle
+static int colormode = 0;
+
 // TODO: Can this be done with a winamp library?
-/*
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
 {	
     INPUT keyCode;
+    static int lastinput = 0;
 
     // more at http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 	switch (type) {
 	    case RZSBSDK_DK_NONE:
 		    break;
-        case RZSBSDK_DK_1:
-		    break;
+        case RZSBSDK_DK_1:		    
+            colormode = 0;
+            break;
         case RZSBSDK_DK_2:
             // Stop?
             // VK_MEDIA_STOP
-		    break;
+		    colormode = 1;
+            break;
         case RZSBSDK_DK_3:
-		    break;
+		    colormode = 2;
+            break;
         case RZSBSDK_DK_4:
 		    break;
         case RZSBSDK_DK_5:
 		    break;
         case RZSBSDK_DK_6:
-            // Back
-            // VK_MEDIA_PREV_TRACK
-            // UNSTABLE
-            keyCode.type = INPUT_KEYBOARD;
-            keyCode.ki.wScan = 0;
-            keyCode.ki.wVk = VK_MEDIA_PREV_TRACK;
-            keyCode.ki.time = 0;
-            keyCode.ki.dwExtraInfo = 0;
-            keyCode.ki.dwFlags = 0;
-            SendInput(1, &keyCode, sizeof(INPUT));
-
-            keyCode.ki.dwFlags = KEYEVENTF_KEYUP;
-            SendInput(1, &keyCode, sizeof(INPUT));
+            // poor man's debounce
+            if (lastinput != RZSBSDK_DK_6){
+                // Back
+                keyCode.type = INPUT_KEYBOARD;
+                keyCode.ki.wScan = 0;
+                keyCode.ki.wVk = 0x5A; // z key
+                keyCode.ki.time = 0;
+                keyCode.ki.dwExtraInfo = 0;
+                keyCode.ki.dwFlags = 0;
+                SendInput(1, &keyCode, sizeof(INPUT));
+            }            
 		    break;
         case RZSBSDK_DK_7:
-            // Play
-            // VK_MEDIA_PLAY_PAUSE
+            if (lastinput != RZSBSDK_DK_7){
+                // Play / Pause  
+                keyCode.type = INPUT_KEYBOARD;
+                keyCode.ki.wScan = 0;            
+                keyCode.ki.wVk = 0x43; // c key
+                keyCode.ki.time = 0;
+                keyCode.ki.dwExtraInfo = 0;
+                keyCode.ki.dwFlags = 0;
+                SendInput(1, &keyCode, sizeof(INPUT));
+            }
 		    break;
         case RZSBSDK_DK_8:
             // Fast FW
-            // VK_MEDIA_NEXT_TRACK
+            if (lastinput != RZSBSDK_DK_8){
+                keyCode.type = INPUT_KEYBOARD;
+                keyCode.ki.wScan = 0;            
+                keyCode.ki.wVk = 0x42; // b key
+                keyCode.ki.time = 0;
+                keyCode.ki.dwExtraInfo = 0;
+                keyCode.ki.dwFlags = 0;
+                SendInput(1, &keyCode, sizeof(INPUT));    
+            }
 	        break;
         case RZSBSDK_DK_9:
             // VOL_UP
-            // VK_VOLUME_UP
+            // SIMULATE MOUSE WHEEL UP
+            if (lastinput != RZSBSDK_DK_9){
+                INPUT in;
+                in.type = INPUT_MOUSE;
+                in.mi.dx = 0;
+                in.mi.dy = 120;
+                in.mi.dwFlags = MOUSEEVENTF_WHEEL;
+                in.mi.time = 0;
+                in.mi.dwExtraInfo = 0;
+                in.mi.mouseData = WHEEL_DELTA;
+                SendInput(1,&in,sizeof(in));
+            }
 		    break;
         case RZSBSDK_DK_10:
-		    break;	
+            // VOLDOWN
+		    // SIMULATE MOUSE WHEEL DOWN                        
+            if (lastinput != RZSBSDK_DK_9){
+                INPUT in;
+                in.type = INPUT_MOUSE;
+                in.mi.dx = 0;
+                in.mi.dy = -120;
+                in.mi.dwFlags = MOUSEEVENTF_WHEEL;
+                in.mi.time = 0;
+                in.mi.dwExtraInfo = 0;
+                in.mi.mouseData = WHEEL_DELTA;
+                SendInput(1,&in,sizeof(in));
+            }
+		    break;
+            break;	
 	    default:
 		    break;
 	}
+
+    lastinput = 0;
     return S_OK;
 }
-*/
-
 
 int visInit(struct winampVisModule *this_mod)
 {
 	// init Win32 stuff
 	int styles; // our Window styles
-	HWND parent = NULL; // our parent window's handle
+
 	WNDCLASS wc; // our Window class
 	HWND (*e)(embedWindowState *v);
 
@@ -130,7 +171,7 @@ int visInit(struct winampVisModule *this_mod)
 	getVisInstance()->myWindowState.r.right		= VIS_SCENE_WIDTH;
 	getVisInstance()->myWindowState.r.bottom	= VIS_SCENE_HEIGHT;
    
-	*(void**)&e = (void *)SendMessage(this_mod->hwndParent,WM_WA_IPC,(LPARAM)0,IPC_GET_EMBEDIF);
+	*(void**)&e = (void *)SendMessage(this_mod->hwndParent,WM_WA_IPC,(LPARAM)0,IPC_GET_EMBEDIF);    
 
 	if (!e)
 	{
@@ -218,22 +259,19 @@ int visInit(struct winampVisModule *this_mod)
 	// show the window
 	ShowWindow(parent,SW_SHOWNORMAL);
 
-    
-	initScene( getVisInstance() );    
+    	
     RzSBStart();
 
     // Next time use noun project
     // UNSTABLE
     // TODO: Are these images correctly getting added as a DLL resource?
-    /*
     LoadKeyImageToRazer("imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
     LoadKeyImageToRazer("imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
     LoadKeyImageToRazer("imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
     LoadKeyImageToRazer("imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("imagedata\\voldown.png",RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer("imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
 
     RzSBDynamicKeySetCallback(OnDkClickedButton);
-    */
     // END UNSTABLE
 
 	return 0;
@@ -256,39 +294,41 @@ unsigned short __inline ARGB2RGB565(int x)
 	return rgb565;
 }
 
+//#define STDCOLOR
 #undef STDCOLORS
-#undef REDCOLOR
-#define BLUECOLOR
+//#undef REDCOLOR
+#define REDCOLOR
+#undef BLUECOLOR
+//#define BLUECOLOR
 
 unsigned short __inline COLORFROMROW(int row)
 {
-    #ifdef STDCOLORS
-    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-        return ARGB2RGB565( (int)
-            ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
-            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-        );
+    if (colormode == 0){
+        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+            );
+        }
+        return ARGB2RGB565(0);
+    } else if (colormode == 1){
+    
+        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
+            );
+        }
+        return ARGB2RGB565(0);
+    } else {        
+        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+            );
+        }
+        return ARGB2RGB565(0);
     }
-    return ARGB2RGB565(0);
-    #endif
-    #ifdef REDCOLOR
-    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-        return ARGB2RGB565( (int)
-            ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
-            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
-        );
-    }
-    return ARGB2RGB565(0);
-    #endif
-    #ifdef BLUECOLOR
-    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-        return ARGB2RGB565( (int)
-            ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) )) | 
-            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-        );
-    }
-    return ARGB2RGB565(0);
-    #endif
 }
 
 int visRender(struct winampVisModule *this_mod)
@@ -332,10 +372,8 @@ int visRender(struct winampVisModule *this_mod)
 	// start OpenGL rendering
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-
-	//TODO: add your rendering code here
-	renderScene( this_mod );
-
+    
+    // RENDERING CODE GOES HERE
 
 	// Buffer size--how many pixels in the buffers
     sNumPixels = SWITCHBLADE_TOUCHPAD_X_SIZE * SWITCHBLADE_TOUCHPAD_Y_SIZE;
@@ -421,8 +459,6 @@ int visRender(struct winampVisModule *this_mod)
 
 void visQuit(struct winampVisModule *this_mod)
 {
-	shutdownScene();
-
 	// disable OpenGL
 	wglMakeCurrent(NULL,NULL);
 	wglDeleteContext(getVisInstance()->hRC);
@@ -491,216 +527,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProc(hWnd,message,wParam,lParam);
 }
-
-/* DEMO IMPLEMENTATION */
-void initScene(winampGLVisualizer *this_inst)
-{
-
-
-    glEnable(GL_NORMALIZE);
-    /*
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, heart_mat);
-	
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
-
-	glLightfv(GL_LIGHT0, GL_POSITION, fPos);
-
-	f = LightParam[3]/100.f;
-	fAmbient[0]= f;
-	fAmbient[1]= f;
-	fAmbient[2]= f;
-	fAmbient[3]= 0.f;
-	glLightfv(GL_LIGHT0, GL_AMBIENT, fAmbient);
-
-	f = LightParam[4]/100.f;	
-	fDiffuse[0]= f;
-	fDiffuse[1]= f;
-	fDiffuse[2]= f;
-	fDiffuse[3]= 0.f;
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, fDiffuse);
-
-	f = LightParam[5]/100.f;
-	fSpecular[0]= f;
-	fSpecular[1]= f;
-	fSpecular[2]= f;
-	fSpecular[3]= 0.f;
-	glLightfv(GL_LIGHT0, GL_SPECULAR, fSpecular);
-
-	f = LightParam[6]/100.f;
-	fAmbMat[0]= f;
-	fAmbMat[1]= f;
-	fAmbMat[2]= f;
-	fAmbMat[3]= 0.f;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, fAmbMat);
-
-	f = LightParam[7]/100.f;
-	fDifMat[0]= f;
-	fDifMat[1]= f;
-	fDifMat[2]= f;
-	fDifMat[3]= 1.f;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, fDifMat);
-
-	f = LightParam[8]/100.f;
-	fSpecMat[0]= f;
-	fSpecMat[1]= f;
-	fSpecMat[2]= f;
-	fSpecMat[3]= 0.f;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, fSpecMat);
-
-	fShine = 128 * LightParam[9]/100.f;
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, fShine);
-
-	f = LightParam[10]/100.f;
-	fEmission[0]= f;
-	fEmission[1]= f;
-	fEmission[2]= f;
-	fEmission[3]= 0.f;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, fEmission);
-		
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-	font_Create(&g_font, this_inst->hDC, "Webdings", 16);
-    */
-}
-
-void shutdownScene()
-{
-	/*
-    font_Destroy(&g_font);
-    */
-}
-
-
-
-void renderScene(struct winampVisModule *this_mod)
-{
-    /*
-	int i,j,k;
-
-	for(i=0;i<MAX_HEARTS;i++)
-		g_hearts[i] = 0;
-
-	j=0;k=0;
-	for(i=127;i<576;i++)
-	{
-		if(j > MAX_HEARTS) break;
-
-		if(g_hearts[j] >= 5) //trim
-		{
-			g_hearts[j] = 5;
-		}
-		else
-		{
-			g_hearts[j] += this_mod->spectrumData[0][i] + this_mod->spectrumData[1][i];
-		}
-		k++;
-		if(k==8){ j++; k=0; }
-	}
-
-	// draw the V character (left side)
-	drawHeart(-7.0f, 1.0f,MAX_DEPTH,false,false,g_hearts[0]);
-	drawHeart(-6.5f, 0.3f,MAX_DEPTH,false,false,g_hearts[1]);
-	drawHeart(-6.0f,-0.4f,MAX_DEPTH,false,false,g_hearts[2]);
-	// (right side)
-	drawHeart(-4.5f, 1.0f,MAX_DEPTH,false,false,g_hearts[3]);
-	drawHeart(-5.2f, 0.3f,MAX_DEPTH,false,false,g_hearts[4]);
-
-	// draw the A character (left side)
-	drawHeart(-3.5f, 1.0f,MAX_DEPTH,false,false,g_hearts[5]);
-	drawHeart(-4.0f, 0.3f,MAX_DEPTH,false,false,g_hearts[6]);
-	drawHeart(-4.5f,-0.4f,MAX_DEPTH,false,false,g_hearts[7]);
-	// (right side)
-	drawHeart(-3.1f, 0.3f,MAX_DEPTH,false,false,g_hearts[8]);
-	drawHeart(-2.8f,-0.4f,MAX_DEPTH,false,false,g_hearts[9]);
-
-	// draw the L character (vertical)
-	drawHeart(-1.8f, 1.0f,MAX_DEPTH,false,false,g_hearts[10]);
-	drawHeart(-1.8f, 0.3f,MAX_DEPTH,false,false,g_hearts[11]);
-	drawHeart(-1.8f,-0.4f,MAX_DEPTH,false,false,g_hearts[12]);
-	// (horizontal)
-	drawHeart(-1.0f,-0.4f,MAX_DEPTH,false,false,g_hearts[13]);
-
-	// draw the E character (vertical)
-	drawHeart(0.0f, 1.0f,MAX_DEPTH,false,false,g_hearts[14]);
-	drawHeart(0.0f, 0.3f,MAX_DEPTH,false,false,g_hearts[15]);
-	drawHeart(0.0f,-0.4f,MAX_DEPTH,false,false,g_hearts[16]);
-	// (horizontal)
-	drawHeart(0.8f, 1.0f,MAX_DEPTH,false,false,g_hearts[17]);
-	drawHeart(0.7f, 0.3f,MAX_DEPTH,true ,false,g_hearts[18]); //make the middle one "smaller"
-	drawHeart(0.8f,-0.4f,MAX_DEPTH,false,false,g_hearts[19]);
-
-	// draw the R character (vertical - left)
-	drawHeart(1.8f, 1.0f,MAX_DEPTH,false,false,g_hearts[20]);
-	drawHeart(1.8f, 0.3f,MAX_DEPTH,false,false,g_hearts[21]);
-	drawHeart(1.8f,-0.4f,MAX_DEPTH,false,false,g_hearts[22]);
-
-	// draw the R character (vertical - right)
-	drawHeart(2.6f, 1.0f,MAX_DEPTH,false,false,g_hearts[23]);
-	drawHeart(2.6f, 0.3f,MAX_DEPTH,true ,false,g_hearts[24]);
-	drawHeart(2.8f,-0.4f,MAX_DEPTH,true ,false,g_hearts[25]);
-
-	// draw the I character (vertical)
-	drawHeart(3.7f, 1.0f,MAX_DEPTH,false,false,g_hearts[26]);
-	drawHeart(3.7f, 0.3f,MAX_DEPTH,false,false,g_hearts[27]);
-	drawHeart(3.7f,-0.4f,MAX_DEPTH,false,false,g_hearts[28]);
-
-	// draw the A character (left side)
-	drawHeart(5.8f, 1.0f,MAX_DEPTH,false,false,g_hearts[29]);
-	drawHeart(5.3f, 0.3f,MAX_DEPTH,false,false,g_hearts[30]);
-	drawHeart(4.8f,-0.4f,MAX_DEPTH,false,false,g_hearts[31]);
-	// (right side)
-	drawHeart(6.2f, 0.3f,MAX_DEPTH,false,false,g_hearts[32]);
-	drawHeart(6.5f,-0.4f,MAX_DEPTH,false,false,g_hearts[33]);
-    */
-}
-
-void drawHeart(float x, float y, float z, bool smaller, bool rotate, int num)
-{
-    /*
-	static float rotX = 0.0f; int i; float zz = z;
-	float c,f,r,g,b;
-
-	for(i=1;i<=num+1;i++)
-	{
-		glLoadIdentity();
-		glTranslatef(x,y,zz);
-
-		//glColor3f(0.5f,0.0f,0.1f); // color
-		c = (float) (11.77*-num)/100;
-        f = (float) (11.5*-num)/100;
-
-		r =1-f;
-		g =0.0f;
-        b =c-f;
-
-		glColor3f(r,g,b); // color
-
-		if(smaller)
-		{
-			glScalef(0.6f,0.6f,0.6f);
-		}
-		if(rotate)
-		{
-			glRotatef(rotX,0.0f,1.0f,0.0f);
-			rotX += 0.1f;
-		}
-		else
-		{
-			glRotatef(0.0f,0.0f,0.0f,0.0f);
-			rotX = 0.0f;
-		}
-		font_Print(&g_font, "Y");
-
-		if(smaller)
-		{
-			zz += HEART_STEP_SMALL;
-		}
-		else
-		{
-			zz += HEART_STEP;
-		}
-	}
-    */
-}
-/* DEMO IMPLEMENTATION */

@@ -16,9 +16,6 @@
 #include "demo.h"
 #include "include\SwitchBlade.h"
 
-void drawHeart(float x, float y, float z, bool smaller, bool rotate, int num);
-/* DEMO PROTOTYPES */
-
 void visConfig(struct winampVisModule *this_mod)
 {
 	//TOOD: add specific configuration stuff here (e.g show an nice dialog, etc)
@@ -265,15 +262,14 @@ int visInit(struct winampVisModule *this_mod)
     RzSBStart();
 
     // Next time use noun project
-    // UNSTABLE
-    // TODO: Are these images correctly getting added as a DLL resource?
-    LoadKeyImageToRazer("imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer("imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
-
+    // TODO: Are these images correctly getting added as a DLL resource?    
+    LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
     RzSBDynamicKeySetCallback(OnDkClickedButton);
+
     // END UNSTABLE
 
 	return 0;
@@ -467,12 +463,10 @@ int visRender(struct winampVisModule *this_mod)
 	// Send the stream and render the buffer
     ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_WIDGET, &bp);
 
-    SwapBuffers(getVisInstance()->hDC);
-
     //TODO: render stuff to the keys!
-    ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_DK_1, &bp);
+    //ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_DK_1, &bp);
+    
     free(g_rgb565);
-
   
 	return 0;
 }
@@ -496,6 +490,8 @@ void visQuit(struct winampVisModule *this_mod)
 		SetForegroundWindow(getVisInstance()->this_mod.hwndParent);
 		DestroyWindow(getVisInstance()->myWindowState.me);
 	}
+    
+    RzSBStop();
 	UnregisterClass(VIS_USER_CLASS,this_mod->hDllInstance); // unregister window class
 }
 

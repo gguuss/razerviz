@@ -12,6 +12,7 @@ See the demo in action:
 - http://youtu.be/ivSlJcQnS0o 
 - http://youtu.be/bgFM_8KSgmM
 - http://youtu.be/Z_O2et62Ivo
+- http://youtu.be/3S0_FtytXCk
 
 ##Usage##
 

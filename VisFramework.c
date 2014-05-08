@@ -300,58 +300,82 @@ unsigned short __inline ARGB2RGB565(int x)
  * @param row The current row to calculate from (0...numrows)
  * @return A short representing the ARGB value.
  */
+static int wheelrotate = 0;
 unsigned short __inline COLORFROMROW(int row)
-{
-    //
-    if (colormode == 0){
-
-
-
-
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 0) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-            );
-        }
-        return ARGB2RGB565(0);
-    } else if (colormode == 1){
-    
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
-            );
-        }
-        return ARGB2RGB565(0);
-    } else  if (colormode == 2){        
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+{   
+    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+        // FIXME: consts, please.
+        if (colormode == 0){
+            // Black and white example
             return ARGB2RGB565( (int)
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) ) | 
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16)
+            );            
+        } else if (colormode == 1){
+            // Green and blue
+            if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+                return ARGB2RGB565( (int)
+                    ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                    ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
+                );
+            }
+            return ARGB2RGB565(0);
+        } else  if (colormode == 2){        
+            // Purple and Blue sample
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 0) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
             );
-        }
-        return ARGB2RGB565(0);
-    } else if (colormode == 3) {        
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565(0);
+        } else if (colormode == 3) {
+            // Red to green        
             return ARGB2RGB565( (int)
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 8)
             );
-        }
-        return ARGB2RGB565(0);
-    } else {        
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-            );
-        }
-        return ARGB2RGB565(0);
-    }
-}
+            return ARGB2RGB565(0);
 
+            // Green to red
+            // Uncomment to reverse colors on this section
+            /*if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+                return ARGB2RGB565( (int)
+                    ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                    ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+                );
+            }
+            return ARGB2RGB565(0);
+            */
+            // Red looks cooler, leave it red.
+        } else {        
+            // Demo of tri-color wheel.
+            int wheel = 160;            
+            int wheelie = wheel + wheelrotate;
+            switch (row / wheel)
+            {            
+                case 0:
+                    return ARGB2RGB565( (int)
+                        wheel - (row % wheel) |        // red down
+                        (row % wheel) << 8             // Green up      
+                        );
+                    break;
+                case 1:                
+                    return ARGB2RGB565( (int)
+                        (wheel - (row % wheel)) << 8 |  // green down
+                        (row % wheel) << 16);           // blue up
+                    break;
+                case 2:
+                    return ARGB2RGB565( (int)
+                        (row % wheel) |                 // red up                
+                        (wheel - (row % wheel)) << 16); // blue down 
+                    break;
+            }
+            wheelrotate += 1;
+        }
+    }
+    // Return black.
+    return ARGB2RGB565(0);
+}
 /**
  * visRender
  * This is the main loop that renders visualizations to the display. In the demo implementation
@@ -376,7 +400,8 @@ int visRender(struct winampVisModule *this_mod)
     
     // Adjust the amplitude based on divLimit values
     // .6 works well at divLimit 200
-    double AMPLITUDE=.6;
+    // .7 will keep things interesting on the high end
+    double AMPLITUDE=.75;
 
 
     // step - counter for speed regulation

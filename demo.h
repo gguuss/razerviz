@@ -17,32 +17,5 @@
 #ifndef __demo_h__
 #define __demo_h__
 
-#include "font3d.h"		/* 3D outline fonts */
-
-// Global Defines
-#define MAX_HEARTS 34
-#define MAX_DEPTH -10.0f
-#define HEART_STEP 0.2f
-#define HEART_STEP_SMALL 0.1f;
-
-// Global Vars
-Font3D g_font;
-
-// Array of hearts
-unsigned int g_hearts[ MAX_HEARTS ] = { 0, };
-
-float heart_mat[] = {0.5f,0.0f,0.3f,1.0f};
-
-float LightParam[] = {50,80,100,15,70,100,100,100,40,70,0};
-float fPos[] =
-{
-	(50-30) *MAX_DEPTH/100, //0
-	(80-30) *MAX_DEPTH/100, //1
-	(100-30)*MAX_DEPTH/100, //2
-	1.f
-};
-
-float f;
-float fAmbient[4],fDiffuse[4],fSpecular[4],fAmbMat[4],fDifMat[4],fSpecMat[4],fShine,fEmission[4];
 
 #endif /* !__demo_h__ */

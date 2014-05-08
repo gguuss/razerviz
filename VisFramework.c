@@ -361,14 +361,14 @@ int visRender(struct winampVisModule *this_mod)
     // row - counter for screen rows
     // col - counter for screen cols
     // amplitude - scale for wave drawn
-    // DIVSCALE - calculated scale for mapping winamp waveform data
+    // DIVSCALE - calculated scale for mapping winamp waveform data (higher values = higher amplitude response)
     // DIVS - number of ?? unused?
     // divCount - counter for number of columns traversed
     // divLimit - Number of columns
     // blkAreaStep - step counter for blank area between bars
     // BLK_LIMIT - the limit in pixels for the blank area.
-    int c=0, row=0, col=0, DIVSCALE=57, DIVS=1, divCount=0, divLimit=50, blkAreaStep=0, BLK_LIMIT=3;
-    double AMPLITUDE=.15;
+    int c=0, row=0, col=0, DIVSCALE=57, DIVS=1, divCount=0, divLimit=200, blkAreaStep=0, BLK_LIMIT=3;
+    double AMPLITUDE=.36;
     // step - counter for speed regulation
     // rows - limiter for drawing to rows
     // rowsDir - direction to move rows

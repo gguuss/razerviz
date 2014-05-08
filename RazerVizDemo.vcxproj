@@ -101,7 +101,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Font3D.c" />
     <ClCompile Include="VisFramework.c" />
   </ItemGroup>
   <ItemGroup>

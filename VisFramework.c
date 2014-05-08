@@ -292,13 +292,14 @@ unsigned short __inline ARGB2RGB565(int x)
 	return rgb565;
 }
 
-//#define STDCOLOR
-#undef STDCOLORS
-//#undef REDCOLOR
-#define REDCOLOR
-#undef BLUECOLOR
-//#define BLUECOLOR
-
+/**
+ * COLORFROMROW
+ * Calculates an ARGB value based on the input row. This function is used in the demo
+ * to make it easy to calculate color gradients for the visualization.
+ * 
+ * @param row The current row to calculate from (0...numrows)
+ * @return A short representing the ARGB value.
+ */
 unsigned short __inline COLORFROMROW(int row)
 {
     if (colormode == 0){
@@ -346,6 +347,14 @@ unsigned short __inline COLORFROMROW(int row)
     }
 }
 
+/**
+ * visRender
+ * This is the main loop that renders visualizations to the display. In the demo implementation
+ * the custom data inputs for directly rendering pixels is used. Alternatively, you could use
+ * images or could directly interface with the hWnd for the switchblade screen.
+ * 
+ * @param this_mod The current visualization module with spectrum analysis.
+ */ 
 int visRender(struct winampVisModule *this_mod)
 {
     // C - Counter for pixels

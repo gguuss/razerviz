@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Font3D.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VisFramework.c">
       <Filter>Source Files</Filter>
     </ClCompile>

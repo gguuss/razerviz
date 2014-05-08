@@ -302,7 +302,12 @@ unsigned short __inline ARGB2RGB565(int x)
  */
 unsigned short __inline COLORFROMROW(int row)
 {
+    //
     if (colormode == 0){
+
+
+
+
         if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
             return ARGB2RGB565( (int)
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 0) | 
@@ -368,14 +373,19 @@ int visRender(struct winampVisModule *this_mod)
     // blkAreaStep - step counter for blank area between bars
     // BLK_LIMIT - the limit in pixels for the blank area.
     int c=0, row=0, col=0, DIVSCALE=57, DIVS=1, divCount=0, divLimit=200, blkAreaStep=0, BLK_LIMIT=3;
-    double AMPLITUDE=.36;
+    
+    // Adjust the amplitude based on divLimit values
+    // .6 works well at divLimit 200
+    double AMPLITUDE=.6;
+
+
     // step - counter for speed regulation
     // rows - limiter for drawing to rows
     // rowsDir - direction to move rows
     // stepSpeed - speed for redrawing the bars, higher value = lower speed, smoother
     // speed - rate of drawing the columns, higher value = faster motion
     //         note: should be a factor of 576, e.g. 1,2,3,4,6,8,16,18,24, ... 576
-    static int step = 0, rows = 0, speed = 16, rowsDir = 50, stepSpeed = 2;
+    static int step = 0, rows = 0, speed = 32, rowsDir = 50, stepSpeed = 2;
 
     // stores cached waveform data
     int* limitBuffer;
@@ -397,7 +407,7 @@ int visRender(struct winampVisModule *this_mod)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
     
-    // RENDERING CODE GOES HERE
+    // RENDERING CODE GOES HERE d(-_-)b
 
 	// Buffer size--how many pixels in the buffers
     sNumPixels = SWITCHBLADE_TOUCHPAD_X_SIZE * SWITCHBLADE_TOUCHPAD_Y_SIZE;

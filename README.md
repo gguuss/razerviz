@@ -62,6 +62,9 @@ running the plugin.
 
 Changes:
 =========
+**05.07.2014**
+Check out the experimental branch. Now testing out more granular visualization bars as well as tri-color gradients.
+
 **05.04.2014**
 - Determined wasn't allocating sufficient memory for track shifts, fixed!
 - Added debug color spectrums for visualizer above viz loop

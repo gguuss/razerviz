@@ -86,8 +86,10 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 keyCode.ki.dwExtraInfo = 0;
                 keyCode.ki.dwFlags = 0;
                 SendInput(1, &keyCode, sizeof(INPUT));
+                LoadKeyImageToRazer(".\\imagedata\\rewind-color.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
             } else {
                 // TODO: switch colors here.
+                LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);                
             }
 		    break;
         case RZSBSDK_DK_7:
@@ -100,8 +102,10 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 keyCode.ki.dwExtraInfo = 0;
                 keyCode.ki.dwFlags = 0;
                 SendInput(1, &keyCode, sizeof(INPUT));
+                LoadKeyImageToRazer(".\\imagedata\\play-color.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             } else {
                 // TODO: switch colors here.
+                LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_8:
@@ -113,9 +117,11 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 keyCode.ki.time = 0;
                 keyCode.ki.dwExtraInfo = 0;
                 keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));    
+                SendInput(1, &keyCode, sizeof(INPUT));
+                LoadKeyImageToRazer(".\\imagedata\\fforward-color.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             } else {
                 // TODO: switch colors here.
+                LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             }
 	        break;
         case RZSBSDK_DK_9:
@@ -131,8 +137,10 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 in.mi.dwExtraInfo = 0;
                 in.mi.mouseData = WHEEL_DELTA;
                 SendInput(1,&in,sizeof(in));
+                LoadKeyImageToRazer(".\\imagedata\\volup-color.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
             } else {
                 // TODO: switch colors here.
+                LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_10:
@@ -148,8 +156,10 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 in.mi.dwExtraInfo = 0;
                 in.mi.mouseData = WHEEL_DELTA;
                 SendInput(1,&in,sizeof(in));
+                LoadKeyImageToRazer(".\\imagedata\\voldown-color.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
             } else {
                 // TODO: switch colors here.
+                LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);                
             }
             break;	
 	    default:

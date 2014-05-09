@@ -118,9 +118,15 @@
     <Library Include="lib\RzSwitchbladeSDK2.lib" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="imagedata\fforward-color.png" />
+    <Image Include="imagedata\fforward.png" />
+    <Image Include="imagedata\play-color.png" />
     <Image Include="imagedata\play.png" />
+    <Image Include="imagedata\rewind-color.png" />
     <Image Include="imagedata\rewind.png" />
+    <Image Include="imagedata\voldown-color.png" />
     <Image Include="imagedata\voldown.png" />
+    <Image Include="imagedata\volup-color.png" />
     <Image Include="imagedata\volup.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

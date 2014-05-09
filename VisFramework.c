@@ -86,7 +86,9 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 keyCode.ki.dwExtraInfo = 0;
                 keyCode.ki.dwFlags = 0;
                 SendInput(1, &keyCode, sizeof(INPUT));
-            }            
+            } else {
+                // TODO: switch colors here.
+            }
 		    break;
         case RZSBSDK_DK_7:
             if (keystate != RZSBSDK_KEYSTATE_UP){
@@ -98,6 +100,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 keyCode.ki.dwExtraInfo = 0;
                 keyCode.ki.dwFlags = 0;
                 SendInput(1, &keyCode, sizeof(INPUT));
+            } else {
+                // TODO: switch colors here.
             }
 		    break;
         case RZSBSDK_DK_8:
@@ -110,6 +114,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 keyCode.ki.dwExtraInfo = 0;
                 keyCode.ki.dwFlags = 0;
                 SendInput(1, &keyCode, sizeof(INPUT));    
+            } else {
+                // TODO: switch colors here.
             }
 	        break;
         case RZSBSDK_DK_9:
@@ -125,6 +131,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 in.mi.dwExtraInfo = 0;
                 in.mi.mouseData = WHEEL_DELTA;
                 SendInput(1,&in,sizeof(in));
+            } else {
+                // TODO: switch colors here.
             }
 		    break;
         case RZSBSDK_DK_10:
@@ -140,8 +148,9 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
                 in.mi.dwExtraInfo = 0;
                 in.mi.mouseData = WHEEL_DELTA;
                 SendInput(1,&in,sizeof(in));
+            } else {
+                // TODO: switch colors here.
             }
-		    break;
             break;	
 	    default:
 		    break;

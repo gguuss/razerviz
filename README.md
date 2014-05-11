@@ -62,6 +62,9 @@ running the plugin.
 
 Changes:
 =========
+**05.07.2014**
+Check the experimental branch for new features.
+
 **05.04.2014**
 - Determined wasn't allocating sufficient memory for track shifts, fixed!
 - Added debug color spectrums for visualizer above viz loop

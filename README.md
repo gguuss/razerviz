@@ -62,6 +62,12 @@ running the plugin.
 
 Changes:
 =========
+**05.15.2014**
+Let's call this version 0.3...
+* Added support for Volume up / down media keys
+** Still not able to send media playback keys, winamp might be blocking
+** Might be worth trying sending the hotkeys to the parent window...
+
 **05.07.2014**
 Check out the experimental branch. Now testing out more granular visualization bars as well as tri-color gradients.
 

@@ -23,9 +23,6 @@
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Font3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>

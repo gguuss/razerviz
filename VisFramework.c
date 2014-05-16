@@ -49,6 +49,7 @@ HWND parent = NULL; // our parent window's handle
 static int colormode = 0;
 
 // TODO: Can this be done with a winamp library?
+#define EXT_LPARAM 0x800000
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
 {	
     INPUT keyCode;
@@ -78,87 +79,52 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         case RZSBSDK_DK_6:
             // poor man's debounce
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                // Back
-                keyCode.type = INPUT_KEYBOARD;
-                keyCode.ki.wScan = 0;
-                keyCode.ki.wVk = 0x5A; // z key
-                keyCode.ki.time = 0;
-                keyCode.ki.dwExtraInfo = 0;
-                keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));
+                // Back               
+                keybd_event(VK_MEDIA_PREV_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
                 LoadKeyImageToRazer(".\\imagedata\\rewind-color.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
             } else {
-                // TODO: switch colors here.
+                keybd_event(VK_MEDIA_PREV_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);                
             }
 		    break;
         case RZSBSDK_DK_7:
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                // Play / Pause  
-                keyCode.type = INPUT_KEYBOARD;
-                keyCode.ki.wScan = 0;            
-                keyCode.ki.wVk = 0x43; // c key
-                keyCode.ki.time = 0;
-                keyCode.ki.dwExtraInfo = 0;
-                keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));
+                // Play / Pause
+                keybd_event(VK_MEDIA_PLAY_PAUSE, 0x45, KEYEVENTF_KEYUP, 0);
                 LoadKeyImageToRazer(".\\imagedata\\play-color.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             } else {
-                // TODO: switch colors here.
+                keybd_event(VK_MEDIA_PLAY_PAUSE, 0x45, 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_8:
             // Fast FW
-            if (keystate != RZSBSDK_KEYSTATE_UP){
-                keyCode.type = INPUT_KEYBOARD;
-                keyCode.ki.wScan = 0;            
-                keyCode.ki.wVk = 0x42; // b key
-                keyCode.ki.time = 0;
-                keyCode.ki.dwExtraInfo = 0;
-                keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));
+            if (keystate != RZSBSDK_KEYSTATE_UP){                
+                keybd_event(VK_MEDIA_NEXT_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
                 LoadKeyImageToRazer(".\\imagedata\\fforward-color.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             } else {
-                // TODO: switch colors here.
+                keybd_event(VK_MEDIA_NEXT_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             }
 	        break;
         case RZSBSDK_DK_9:
             // VOL_UP
-            // SIMULATE MOUSE WHEEL UP
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                INPUT in;
-                in.type = INPUT_MOUSE;
-                in.mi.dx = 0;
-                in.mi.dy = 120;
-                in.mi.dwFlags = MOUSEEVENTF_WHEEL;
-                in.mi.time = 0;
-                in.mi.dwExtraInfo = 0;
-                in.mi.mouseData = WHEEL_DELTA;
-                SendInput(1,&in,sizeof(in));
+                keybd_event(VK_VOLUME_UP, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
                 LoadKeyImageToRazer(".\\imagedata\\volup-color.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
             } else {
-                // TODO: switch colors here.
+                keybd_event(VK_VOLUME_UP, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_10:
             // VOLDOWN
 		    // SIMULATE MOUSE WHEEL DOWN                        
-            if (keystate != RZSBSDK_KEYSTATE_UP){
-                INPUT in;
-                in.type = INPUT_MOUSE;
-                in.mi.dx = 0;
-                in.mi.dy = -120;
-                in.mi.dwFlags = MOUSEEVENTF_WHEEL;
-                in.mi.time = 0;
-                in.mi.dwExtraInfo = 0;
-                in.mi.mouseData = WHEEL_DELTA;
-                SendInput(1,&in,sizeof(in));
+            if (keystate != RZSBSDK_KEYSTATE_UP){                
+                keybd_event(VK_VOLUME_DOWN, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
                 LoadKeyImageToRazer(".\\imagedata\\voldown-color.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
             } else {
-                // TODO: switch colors here.
+                keybd_event(VK_VOLUME_DOWN, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);                
             }
             break;	
@@ -177,8 +143,7 @@ int visInit(struct winampVisModule *this_mod)
 
 	WNDCLASS wc; // our Window class
 	HWND (*e)(embedWindowState *v);
-
-
+     
 	// OpenGL pixel format related
 	PIXELFORMATDESCRIPTOR pfd;
 	int nPixelFormat;
@@ -591,7 +556,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return 0;	
 		}
 
-		case WM_KEYUP:
+        case WM_KEYUP:
 		{
 			getVisInstance()->keys[ wParam ] = false;
 			PostMessage(getVisInstance()->this_mod.hwndParent,message,wParam,lParam);

@@ -45,6 +45,59 @@ void LoadKeyImageToRazer(const char * filename, RZSBSDK_DKTYPE targetKey, RZSBSD
 HWND parent = NULL; // our parent window's handle
 static int colormode = 0;
 
+void getFileString(char* buffer, char* filename){
+    char append[64];
+    append[0] = (char)'\0';
+    buffer[0] = (char)'\0';
+    switch(colormode){
+    case 5:
+        strcat(append,"-5");
+        break;
+    case 6:
+        strcat(append,"-6");
+        break;
+    case 7:
+        strcat(append,"-7");
+        break;
+    default:
+        break;
+    }
+    strcat(append, ".png");
+
+    strcat(buffer, filename);
+    strcat(buffer, append);
+}
+
+void resetDKImages(){
+    char buffer[256];
+
+    getFileString(buffer, ".\\imagedata\\rewind");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\play");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\fforward");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\volup");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\voldown");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+}
+
+int beatcount = 0;
+void setBeatKeep(){
+    char buffer[256];
+    getFileString(buffer, ".\\imagedata\\beatkeep");
+    LoadKeyImageToRazer(beatcount == 0 ?  buffer : "", RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(beatcount == 1 ? buffer : "", RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(beatcount == 2 ? buffer : "", RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(beatcount == 3 ? buffer : "", RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+    LoadKeyImageToRazer(beatcount == 4 ? buffer : "", RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+    beatcount++;
+    if (beatcount > 4){
+        beatcount = 0;
+    }
+}
+
 // TODO: Can this be done with a winamp library?
 #define EXT_LPARAM 0x800000
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
@@ -53,6 +106,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
     HWND winamp;
     int cmdCode = 0;
     bool sendCmd = false;
+    char buffer[256];
     //windowCommand wc;
 
     static int lastinput = 0;
@@ -68,6 +122,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             } else {
                 colormode += 5;
             }
+            resetDKImages();
         }
         break;
     case RZSBSDK_DK_2:
@@ -77,6 +132,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             } else {
                 colormode += 5;
             }
+            resetDKImages();
         }
         break;
     case RZSBSDK_DK_3:
@@ -86,6 +142,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             } else {
                 colormode += 5;
             }
+            resetDKImages();
         }
         break;
     case RZSBSDK_DK_4:
@@ -95,6 +152,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             } else {
                 colormode += 5;
             }
+            resetDKImages();
         }
         break;
     case RZSBSDK_DK_5:
@@ -104,6 +162,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             } else {
                 colormode += 5;
             }
+            resetDKImages();
         }
         break;
     case RZSBSDK_DK_6:
@@ -115,7 +174,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         } else {
             sendCmd = true;
             cmdCode = WINAMP_BUTTON1;
-            LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\rewind");
+            LoadKeyImageToRazer(buffer,RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_7:
@@ -123,9 +183,11 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             // Play / Pause
             sendCmd = true;
             cmdCode = WINAMP_BUTTON3;
+
             LoadKeyImageToRazer(".\\imagedata\\play-color.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
         } else {
-            LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\play");
+            LoadKeyImageToRazer(buffer,RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_8:
@@ -135,7 +197,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             cmdCode = WINAMP_BUTTON5;
             LoadKeyImageToRazer(".\\imagedata\\fforward-color.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
         } else {
-            LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\fforward");
+            LoadKeyImageToRazer(buffer,RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_9:
@@ -145,7 +208,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             LoadKeyImageToRazer(".\\imagedata\\volup-color.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
         } else {
             keybd_event(VK_VOLUME_UP, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
-            LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\volup");
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_10:
@@ -156,7 +220,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             LoadKeyImageToRazer(".\\imagedata\\voldown-color.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
         } else {
             keybd_event(VK_VOLUME_DOWN, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
-            LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\voldown");
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
         }
         break;
     default:
@@ -285,12 +350,8 @@ int visInit(struct winampVisModule *this_mod)
     RzSBStart();
 
     // Next time use noun project
-    // TODO: Are these images correctly getting added as a DLL resource?
-    LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+    resetDKImages();
+    setBeatKeep();
     RzSBDynamicKeySetCallback(OnDkClickedButton);
 
     // END UNSTABLE
@@ -537,6 +598,14 @@ int visRender(struct winampVisModule *this_mod)
         limitBuffer[divCount] =
             (int)((this_mod->spectrumData[0][divCount] * DIVSCALE +
             this_mod->spectrumData[1][divCount] * DIVSCALE)  * AMPLITUDE);
+    }
+
+    divCount = 0;
+    while (this_mod->spectrumData[0][divCount] > 7 && divCount < 30){
+        divCount++;
+        if (divCount == 29){
+            setBeatKeep();
+        }
     }
 
     drawNextPixels = limitBuffer[divCount] > row;

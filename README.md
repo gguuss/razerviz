@@ -62,8 +62,23 @@ running the plugin.
 
 Changes:
 =========
+**05.20.2014**
+Great news, we're feature complete for a new random version designation, 0.9. This release is stable and I'm considering it beta-quality. The plugin has the following features:
+* Visualization with spectrum analyzer data from Winamp
+* 5 color themes
+* Dynamic color on media keys
+* Media playback control on keys working now for prev, play/pause, and next track
+
+I'm going to see about getting together a final release for submission to Razer that will include theme switching past 5 themes. That will be 1.0, next will come actual visualizations on the VKs as we march on past 1!
+
+**05.15.2014**
+Let's call this version 0.3...
+* Added support for Volume up / down media keys
+** Still not able to send media playback keys, winamp might be blocking
+** Might be worth trying sending the hotkeys to the parent window...
+
 **05.07.2014**
-Check the experimental branch for new features.
+Check out the experimental branch. Now testing out more granular visualization bars as well as tri-color gradients.
 
 **05.04.2014**
 - Determined wasn't allocating sufficient memory for track shifts, fixed!

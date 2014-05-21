@@ -41,5 +41,6 @@
 
 // Winamp SDK
 #include "winamp\wa_ipc.h"
+#include "winamp\IN2.H"
 
 #endif /* !__common_h__ */

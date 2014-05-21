@@ -23,9 +23,6 @@
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Font3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -62,6 +59,24 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="imagedata\volup.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="imagedata\fforward.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="imagedata\fforward-color.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="imagedata\play-color.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="imagedata\rewind-color.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="imagedata\voldown-color.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="imagedata\volup-color.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

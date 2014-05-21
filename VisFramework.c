@@ -13,7 +13,6 @@
 	See the GNU General Public License for more details.            
 */
 #include "VisFramework.h"
-#include "demo.h"
 #include "include\SwitchBlade.h"
 
 void visConfig(struct winampVisModule *this_mod)
@@ -49,9 +48,15 @@ HWND parent = NULL; // our parent window's handle
 static int colormode = 0;
 
 // TODO: Can this be done with a winamp library?
+#define EXT_LPARAM 0x800000
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
 {	
     INPUT keyCode;
+    HWND winamp;
+    int cmdCode = 0;
+    bool sendCmd = false;
+    //windowCommand wc;
+
     static int lastinput = 0;
 
     // more at http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
@@ -78,74 +83,68 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         case RZSBSDK_DK_6:
             // poor man's debounce
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                // Back
-                keyCode.type = INPUT_KEYBOARD;
-                keyCode.ki.wScan = 0;
-                keyCode.ki.wVk = 0x5A; // z key
-                keyCode.ki.time = 0;
-                keyCode.ki.dwExtraInfo = 0;
-                keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));
-            }            
+                // Back               
+                LoadKeyImageToRazer(".\\imagedata\\rewind-color.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+            } else {
+                sendCmd = true;
+                cmdCode = WINAMP_BUTTON1;
+                LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);                
+            }
 		    break;
         case RZSBSDK_DK_7:
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                // Play / Pause  
-                keyCode.type = INPUT_KEYBOARD;
-                keyCode.ki.wScan = 0;            
-                keyCode.ki.wVk = 0x43; // c key
-                keyCode.ki.time = 0;
-                keyCode.ki.dwExtraInfo = 0;
-                keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));
+                // Play / Pause                
+                sendCmd = true;
+                cmdCode = WINAMP_BUTTON3;
+                LoadKeyImageToRazer(".\\imagedata\\play-color.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+            } else {
+                LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_8:
             // Fast FW
-            if (keystate != RZSBSDK_KEYSTATE_UP){
-                keyCode.type = INPUT_KEYBOARD;
-                keyCode.ki.wScan = 0;            
-                keyCode.ki.wVk = 0x42; // b key
-                keyCode.ki.time = 0;
-                keyCode.ki.dwExtraInfo = 0;
-                keyCode.ki.dwFlags = 0;
-                SendInput(1, &keyCode, sizeof(INPUT));    
+            if (keystate != RZSBSDK_KEYSTATE_UP){                
+                sendCmd = true;
+                cmdCode = WINAMP_BUTTON5;
+                LoadKeyImageToRazer(".\\imagedata\\fforward-color.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+            } else {
+                LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             }
 	        break;
         case RZSBSDK_DK_9:
             // VOL_UP
-            // SIMULATE MOUSE WHEEL UP
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                INPUT in;
-                in.type = INPUT_MOUSE;
-                in.mi.dx = 0;
-                in.mi.dy = 120;
-                in.mi.dwFlags = MOUSEEVENTF_WHEEL;
-                in.mi.time = 0;
-                in.mi.dwExtraInfo = 0;
-                in.mi.mouseData = WHEEL_DELTA;
-                SendInput(1,&in,sizeof(in));
+                keybd_event(VK_VOLUME_UP, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+                LoadKeyImageToRazer(".\\imagedata\\volup-color.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+            } else {
+                keybd_event(VK_VOLUME_UP, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
+                LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_10:
             // VOLDOWN
 		    // SIMULATE MOUSE WHEEL DOWN                        
-            if (keystate != RZSBSDK_KEYSTATE_UP){
-                INPUT in;
-                in.type = INPUT_MOUSE;
-                in.mi.dx = 0;
-                in.mi.dy = -120;
-                in.mi.dwFlags = MOUSEEVENTF_WHEEL;
-                in.mi.time = 0;
-                in.mi.dwExtraInfo = 0;
-                in.mi.mouseData = WHEEL_DELTA;
-                SendInput(1,&in,sizeof(in));
+            if (keystate != RZSBSDK_KEYSTATE_UP){                
+                keybd_event(VK_VOLUME_DOWN, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+                LoadKeyImageToRazer(".\\imagedata\\voldown-color.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+            } else {
+                keybd_event(VK_VOLUME_DOWN, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
+                LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);                
             }
-		    break;
             break;	
 	    default:
 		    break;
 	}
+    
+    if (sendCmd) {
+        winamp = FindWindow("Winamp v1.x", NULL);
+        if (!winamp){
+            MessageBox(parent, "Whoopsie", "Could not find winamp window", MB_OK);    
+            return;
+        }
+        //TODO(gguuss): What is the secret of 273?
+        SendMessage(winamp, 273, cmdCode, 0);
+    }
 
     lastinput = 0;
     return S_OK;
@@ -158,8 +157,7 @@ int visInit(struct winampVisModule *this_mod)
 
 	WNDCLASS wc; // our Window class
 	HWND (*e)(embedWindowState *v);
-
-
+     
 	// OpenGL pixel format related
 	PIXELFORMATDESCRIPTOR pfd;
 	int nPixelFormat;
@@ -300,53 +298,82 @@ unsigned short __inline ARGB2RGB565(int x)
  * @param row The current row to calculate from (0...numrows)
  * @return A short representing the ARGB value.
  */
+static int wheelrotate = 0;
 unsigned short __inline COLORFROMROW(int row)
-{
-    if (colormode == 0){
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 0) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-            );
-        }
-        return ARGB2RGB565(0);
-    } else if (colormode == 1){
-    
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
-            );
-        }
-        return ARGB2RGB565(0);
-    } else  if (colormode == 2){        
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+{   
+    if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+        // FIXME: consts, please.
+        if (colormode == 0){
+            // Black and white example
             return ARGB2RGB565( (int)
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) ) | 
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16)
+            );            
+        } else if (colormode == 1){
+            // Green and blue
+            if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+                return ARGB2RGB565( (int)
+                    ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                    ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)))
+                );
+            }
+            return ARGB2RGB565(0);
+        } else  if (colormode == 2){        
+            // Purple and Blue sample
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 0) | 
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
             );
-        }
-        return ARGB2RGB565(0);
-    } else if (colormode == 3) {        
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+            return ARGB2RGB565(0);
+        } else if (colormode == 3) {
+            // Red to green        
             return ARGB2RGB565( (int)
                 ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16) | 
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 8)
             );
-        }
-        return ARGB2RGB565(0);
-    } else {        
-        if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
-                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-            );
-        }
-        return ARGB2RGB565(0);
-    }
-}
+            return ARGB2RGB565(0);
 
+            // Green to red
+            // Uncomment to reverse colors on this section
+            /*if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+                return ARGB2RGB565( (int)
+                    ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) | 
+                    ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+                );
+            }
+            return ARGB2RGB565(0);
+            */
+            // Red looks cooler, leave it red.
+        } else {        
+            // Demo of tri-color wheel.
+            int wheel = 160;            
+            int wheelie = wheel + wheelrotate;
+            switch (row / wheel)
+            {            
+                case 0:
+                    return ARGB2RGB565( (int)
+                        wheel - (row % wheel) |        // red down
+                        (row % wheel) << 8             // Green up      
+                        );
+                    break;
+                case 1:                
+                    return ARGB2RGB565( (int)
+                        (wheel - (row % wheel)) << 8 |  // green down
+                        (row % wheel) << 16);           // blue up
+                    break;
+                case 2:
+                    return ARGB2RGB565( (int)
+                        (row % wheel) |                 // red up                
+                        (wheel - (row % wheel)) << 16); // blue down 
+                    break;
+            }
+            wheelrotate += 1;
+        }
+    }
+    // Return black.
+    return ARGB2RGB565(0);
+}
 /**
  * visRender
  * This is the main loop that renders visualizations to the display. In the demo implementation
@@ -361,21 +388,27 @@ int visRender(struct winampVisModule *this_mod)
     // row - counter for screen rows
     // col - counter for screen cols
     // amplitude - scale for wave drawn
-    // DIVSCALE - calculated scale for mapping winamp waveform data
+    // DIVSCALE - calculated scale for mapping winamp waveform data (higher values = higher amplitude response)
     // DIVS - number of ?? unused?
     // divCount - counter for number of columns traversed
     // divLimit - Number of columns
     // blkAreaStep - step counter for blank area between bars
     // BLK_LIMIT - the limit in pixels for the blank area.
-    int c=0, row=0, col=0, DIVSCALE=57, DIVS=1, divCount=0, divLimit=50, blkAreaStep=0, BLK_LIMIT=3;
-    double AMPLITUDE=.15;
+    int c=0, row=0, col=0, DIVSCALE=57, DIVS=1, divCount=0, divLimit=200, blkAreaStep=0, BLK_LIMIT=3;
+    
+    // Adjust the amplitude based on divLimit values
+    // .6 works well at divLimit 200
+    // .7 will keep things interesting on the high end
+    double AMPLITUDE=.75;
+
+
     // step - counter for speed regulation
     // rows - limiter for drawing to rows
     // rowsDir - direction to move rows
     // stepSpeed - speed for redrawing the bars, higher value = lower speed, smoother
     // speed - rate of drawing the columns, higher value = faster motion
     //         note: should be a factor of 576, e.g. 1,2,3,4,6,8,16,18,24, ... 576
-    static int step = 0, rows = 0, speed = 16, rowsDir = 50, stepSpeed = 2;
+    static int step = 0, rows = 0, speed = 32, rowsDir = 50, stepSpeed = 2;
 
     // stores cached waveform data
     int* limitBuffer;
@@ -397,7 +430,7 @@ int visRender(struct winampVisModule *this_mod)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
     
-    // RENDERING CODE GOES HERE
+    // RENDERING CODE GOES HERE d(-_-)b
 
 	// Buffer size--how many pixels in the buffers
     sNumPixels = SWITCHBLADE_TOUCHPAD_X_SIZE * SWITCHBLADE_TOUCHPAD_Y_SIZE;
@@ -537,7 +570,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return 0;	
 		}
 
-		case WM_KEYUP:
+        case WM_KEYUP:
 		{
 			getVisInstance()->keys[ wParam ] = false;
 			PostMessage(getVisInstance()->this_mod.hwndParent,message,wParam,lParam);

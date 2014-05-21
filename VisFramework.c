@@ -13,7 +13,6 @@
 	See the GNU General Public License for more details.            
 */
 #include "VisFramework.h"
-#include "demo.h"
 #include "include\SwitchBlade.h"
 
 void visConfig(struct winampVisModule *this_mod)
@@ -53,6 +52,11 @@ static int colormode = 0;
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
 {	
     INPUT keyCode;
+    HWND winamp;
+    int cmdCode = 0;
+    bool sendCmd = false;
+    //windowCommand wc;
+
     static int lastinput = 0;
 
     // more at http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
@@ -80,30 +84,30 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             // poor man's debounce
             if (keystate != RZSBSDK_KEYSTATE_UP){
                 // Back               
-                keybd_event(VK_MEDIA_PREV_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
                 LoadKeyImageToRazer(".\\imagedata\\rewind-color.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
             } else {
-                keybd_event(VK_MEDIA_PREV_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
+                sendCmd = true;
+                cmdCode = WINAMP_BUTTON1;
                 LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);                
             }
 		    break;
         case RZSBSDK_DK_7:
             if (keystate != RZSBSDK_KEYSTATE_UP){
-                // Play / Pause
-                keybd_event(VK_MEDIA_PLAY_PAUSE, 0x45, KEYEVENTF_KEYUP, 0);
+                // Play / Pause                
+                sendCmd = true;
+                cmdCode = WINAMP_BUTTON3;
                 LoadKeyImageToRazer(".\\imagedata\\play-color.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             } else {
-                keybd_event(VK_MEDIA_PLAY_PAUSE, 0x45, 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
             }
 		    break;
         case RZSBSDK_DK_8:
             // Fast FW
             if (keystate != RZSBSDK_KEYSTATE_UP){                
-                keybd_event(VK_MEDIA_NEXT_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+                sendCmd = true;
+                cmdCode = WINAMP_BUTTON5;
                 LoadKeyImageToRazer(".\\imagedata\\fforward-color.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             } else {
-                keybd_event(VK_MEDIA_NEXT_TRACK, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
                 LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
             }
 	        break;
@@ -131,6 +135,16 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
 	    default:
 		    break;
 	}
+    
+    if (sendCmd) {
+        winamp = FindWindow("Winamp v1.x", NULL);
+        if (!winamp){
+            MessageBox(parent, "Whoopsie", "Could not find winamp window", MB_OK);    
+            return;
+        }
+        //TODO(gguuss): What is the secret of 273?
+        SendMessage(winamp, 273, cmdCode, 0);
+    }
 
     lastinput = 0;
     return S_OK;

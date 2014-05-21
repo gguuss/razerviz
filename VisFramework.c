@@ -110,6 +110,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
         // poor man's debounce
         if (keystate != RZSBSDK_KEYSTATE_UP){
             // Back
+            // TODO: switch keys images with themes
             LoadKeyImageToRazer(".\\imagedata\\rewind-color.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
         } else {
             sendCmd = true;

@@ -98,6 +98,69 @@ void setBeatKeep(){
     }
 }
 
+void setBeatKeepEx(unsigned char spectrum[2][576]){
+    char buffer[256]; // Storage for the image string.
+    int i; // A counter,
+    int limit = 576/5; // Spectrum data per DK
+    int limitVal = 2; // Set to lower for more sensitive, higher to less sensitive.
+    getFileString(buffer, ".\\imagedata\\beatkeep");
+
+    for (i=0;i < limit; i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit;i < limit * 2; i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit*2;i < limit * 3; i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit*3;i<limit*4;i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit*3;i<limit*4;i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+}
+
 // TODO: Can this be done with a winamp library?
 #define EXT_LPARAM 0x800000
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
@@ -607,6 +670,8 @@ int visRender(struct winampVisModule *this_mod)
             setBeatKeep();
         }
     }
+
+    //setBeatKeepEx(this_mod->spectrumData);
 
     drawNextPixels = limitBuffer[divCount] > row;
 

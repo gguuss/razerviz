@@ -44,7 +44,139 @@ void LoadKeyImageToRazer(const char * filename, RZSBSDK_DKTYPE targetKey, RZSBSD
 // TODO: MARK AS GLOBAL
 HWND parent = NULL; // our parent window's handle
 static int colormode = 0;
+bool showBeatKeys = false;
 
+void getFileString(char* buffer, char* filename){
+    char append[64];
+    append[0] = (char)'\0';
+    buffer[0] = (char)'\0';
+    switch(colormode){
+    case 5:
+        strcat(append,"-5");
+        break;
+    case 6:
+        strcat(append,"-6");
+        break;
+    case 7:
+        strcat(append,"-7");
+        break;
+    default:
+        break;
+    }
+    strcat(append, ".png");
+
+    strcat(buffer, filename);
+    strcat(buffer, append);
+}
+
+void resetDKImages(){
+    char buffer[256];
+
+    getFileString(buffer, ".\\imagedata\\rewind");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\play");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\fforward");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\volup");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+    getFileString(buffer, ".\\imagedata\\voldown");
+    LoadKeyImageToRazer(buffer,RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+}
+
+int beatcount = 0; // used for moving the beat image
+bool clear = false; // Did we clear the keys?
+void setBeatKeep(){
+    if (showBeatKeys){
+        char buffer[256];
+        getFileString(buffer, ".\\imagedata\\beatkeep");
+        LoadKeyImageToRazer(beatcount == 0 ?  buffer : "", RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+        LoadKeyImageToRazer(beatcount == 1 ? buffer : "", RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+        LoadKeyImageToRazer(beatcount == 2 ? buffer : "", RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+        LoadKeyImageToRazer(beatcount == 3 ? buffer : "", RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+        LoadKeyImageToRazer(beatcount == 4 ? buffer : "", RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+        beatcount++;
+        if (beatcount > 4){
+            beatcount = 0;
+        }
+        clear = false;
+    }else{
+        // FIXME: Race condition...
+        if (!clear){
+            LoadKeyImageToRazer("", RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+            LoadKeyImageToRazer("", RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+            LoadKeyImageToRazer("", RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+            LoadKeyImageToRazer("", RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+            LoadKeyImageToRazer( "", RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+            clear = true;
+        }
+    }
+}
+
+void setBeatKeepEx(unsigned char spectrum[2][576]){
+    char buffer[256]; // Storage for the image string.
+    int i; // A counter,
+    int limit = 576/5; // Spectrum data per DK
+    int limitVal = 2; // Set to lower for more sensitive, higher to less sensitive.
+    getFileString(buffer, ".\\imagedata\\beatkeep");
+
+    for (i=0;i < limit; i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_1, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit;i < limit * 2; i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_2, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit*2;i < limit * 3; i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_3, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit*3;i<limit*4;i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_4, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+
+    for (i=limit*3;i<limit*4;i++){
+        if (spectrum[0][i] < limitVal){
+            LoadKeyImageToRazer("", RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+            break;
+        }
+
+        if (i == limit - 1){
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_5, RZSBSDK_KEYSTATE_UP);
+        }
+    }
+}
+
+// FIXME: Separate file
 // TODO: Can this be done with a winamp library?
 #define EXT_LPARAM 0x800000
 HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTATETYPE keystate)
@@ -53,6 +185,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
     HWND winamp;
     int cmdCode = 0;
     bool sendCmd = false;
+    char buffer[256];
     //windowCommand wc;
 
     static int lastinput = 0;
@@ -62,31 +195,71 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
     case RZSBSDK_DK_NONE:
         break;
     case RZSBSDK_DK_1:
-        colormode = 0;
+        if (keystate != RZSBSDK_KEYSTATE_UP){
+            if (colormode != 0) {
+                colormode = 0;
+            } else {
+                colormode += 5;
+            }
+            resetDKImages();
+        }
         break;
     case RZSBSDK_DK_2:
-        // Stop?
-        // VK_MEDIA_STOP
-        colormode = 1;
+        if (keystate != RZSBSDK_KEYSTATE_UP){
+            if (colormode != 1) {
+                colormode = 1;
+            } else {
+                colormode += 5;
+            }
+            resetDKImages();
+        }
         break;
     case RZSBSDK_DK_3:
-        colormode = 2;
+        if (keystate != RZSBSDK_KEYSTATE_UP){
+            if (colormode != 2) {
+                colormode = 2;
+            } else {
+                colormode += 5;
+            }
+            resetDKImages();
+        }
         break;
     case RZSBSDK_DK_4:
-        colormode = 3;
+        if (keystate != RZSBSDK_KEYSTATE_UP){
+            if (colormode != 3){
+                colormode = 3;
+            } else {
+                colormode += 5;
+            }
+            resetDKImages();
+        }
         break;
     case RZSBSDK_DK_5:
-        colormode = 4;
+        if (keystate != RZSBSDK_KEYSTATE_UP){
+            if (colormode != 4) {
+                colormode = 4;
+            } else {
+                // Toggle the awesome dots.
+                if (showBeatKeys){
+                    showBeatKeys = false;
+                }else{
+                    showBeatKeys = true;
+                }
+            }
+            resetDKImages();
+        }
         break;
     case RZSBSDK_DK_6:
         // poor man's debounce
         if (keystate != RZSBSDK_KEYSTATE_UP){
             // Back
+            // TODO: switch keys images with themes
             LoadKeyImageToRazer(".\\imagedata\\rewind-color.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
         } else {
             sendCmd = true;
             cmdCode = WINAMP_BUTTON1;
-            LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\rewind");
+            LoadKeyImageToRazer(buffer,RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_7:
@@ -94,9 +267,11 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             // Play / Pause
             sendCmd = true;
             cmdCode = WINAMP_BUTTON3;
+
             LoadKeyImageToRazer(".\\imagedata\\play-color.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
         } else {
-            LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\play");
+            LoadKeyImageToRazer(buffer,RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_8:
@@ -106,7 +281,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             cmdCode = WINAMP_BUTTON5;
             LoadKeyImageToRazer(".\\imagedata\\fforward-color.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
         } else {
-            LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\fforward");
+            LoadKeyImageToRazer(buffer,RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_9:
@@ -116,7 +292,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             LoadKeyImageToRazer(".\\imagedata\\volup-color.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
         } else {
             keybd_event(VK_VOLUME_UP, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
-            LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\volup");
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
         }
         break;
     case RZSBSDK_DK_10:
@@ -127,7 +304,8 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
             LoadKeyImageToRazer(".\\imagedata\\voldown-color.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
         } else {
             keybd_event(VK_VOLUME_DOWN, 0x45, KEYEVENTF_EXTENDEDKEY | 0, 0);
-            LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+            getFileString(buffer, ".\\imagedata\\voldown");
+            LoadKeyImageToRazer(buffer, RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
         }
         break;
     default:
@@ -148,6 +326,7 @@ HRESULT STDMETHODCALLTYPE OnDkClickedButton(RZSBSDK_DKTYPE type, RZSBSDK_KEYSTAT
     return S_OK;
 }
 
+// FIXME separate file? keep?
 int visInit(struct winampVisModule *this_mod)
 {
     // init Win32 stuff
@@ -256,12 +435,8 @@ int visInit(struct winampVisModule *this_mod)
     RzSBStart();
 
     // Next time use noun project
-    // TODO: Are these images correctly getting added as a DLL resource?
-    LoadKeyImageToRazer(".\\imagedata\\rewind.png",RZSBSDK_DK_6, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\play.png",RZSBSDK_DK_7, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\fforward.png",RZSBSDK_DK_8, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\volup.png",RZSBSDK_DK_9, RZSBSDK_KEYSTATE_UP);
-    LoadKeyImageToRazer(".\\imagedata\\voldown.png",RZSBSDK_DK_10, RZSBSDK_KEYSTATE_UP);
+    resetDKImages();
+    setBeatKeep();
     RzSBDynamicKeySetCallback(OnDkClickedButton);
 
     // END UNSTABLE
@@ -269,6 +444,7 @@ int visInit(struct winampVisModule *this_mod)
     return 0;
 }
 
+// FIXME: move to screen render?
 //////////////////////////////////////////////////////////////////////////
 // Convert a pixel from one format (ARGB) to another(RGB565-16bit)
 //////////////////////////////////////////////////////////////////////////
@@ -284,6 +460,7 @@ unsigned short __inline ARGB2RGB565(int x)
     return rgb565;
 }
 
+// FIXME: move to screen render?
 /**
 * COLORFROMROW
 * Calculates an ARGB value based on the input row. This function is used in the demo
@@ -327,18 +504,42 @@ unsigned short __inline COLORFROMROW(int row)
                 ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 8)
                 );
             return ARGB2RGB565(0);
-
-            // Green to red
+            // Red looks cooler, leave it red.
+        } else if (colormode == 4){
             // Uncomment to reverse colors on this section
-            /*if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
-            return ARGB2RGB565( (int)
-            ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) |
-            ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
-            );
+            if (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) > 0){
+                return ARGB2RGB565( (int)
+                    ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) |
+                    ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE)) << 16)
+                    );
             }
             return ARGB2RGB565(0);
-            */
-            // Red looks cooler, leave it red.
+        } else if (colormode == 5){
+            return ARGB2RGB565( (int)
+                ((int)(256)) |
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8) |
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16)
+                );
+        } else if (colormode == 6){
+            //Purple
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) ) |
+                ((int)256 << 8) |
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16)
+                );
+        } else if (colormode == 7) {
+            //Purple
+            return ARGB2RGB565( (int)
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) |
+                ((int)(256 - (row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8 )|
+                ((int)256 )  << 16)
+                );
+        } else if (colormode == 8) {
+            return ARGB2RGB565( (int)
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) |
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 8 |
+                ((int)(row * (256.0 / SWITCHBLADE_TOUCHPAD_Y_SIZE) ) ) << 16
+                );
         } else {
             // Demo of tri-color wheel.
             int wheel = 160;
@@ -368,6 +569,57 @@ unsigned short __inline COLORFROMROW(int row)
     // Return black.
     return ARGB2RGB565(0);
 }
+
+// FIXME: move to keysRender
+/**
+* Renders to the dynamic keys. All sorts of possibilities!
+*/
+void renderToKeys(){
+    //TODO: render stuff to the keys!
+    // C - Counter for pixels
+    // row - counter for screen rows
+    // col - counter for screen cols
+    int c=0, row=0, col=0;
+
+    // step - counter for speed regulation
+    // rowsDir - direction to move rows
+    // stepSpeed - speed for redrawing the bars, higher value = lower speed, smoother
+    // speed - rate of drawing the columns, higher value = faster motion
+    //         note: should be a factor of 576, e.g. 1,2,3,4,6,8,16,18,24, ... 576
+    static int step = 0, speed = 32, rowsDir = 50, stepSpeed = 2;
+
+    // used to trigger blank / nonblank areas
+    bool drawNextPixels = true;
+    // RGB buffer for keyboard screen
+    unsigned short* g_rgb565;
+    RZSBSDK_BUFFERPARAMS bp;
+    HRESULT ret = S_OK;
+    size_t sNumPixels;
+
+    // RENDERING CODE GOES HERE d(-_-)b
+
+    // Buffer size--how many pixels in the buffers
+    g_rgb565 = (unsigned short*)malloc(SWITCHBLADE_DK_SIZE_IMAGEDATA);
+
+    // Traverse the display space and set pixels.
+    for (row = SWITCHBLADE_DYNAMIC_KEY_Y_SIZE - 1; row >= 0; row--)
+    {
+        for (col=0; col < SWITCHBLADE_DYNAMIC_KEY_X_SIZE; col++)
+        {
+            g_rgb565[c++] = ARGB2RGB565(0x0000FF00); // Any color you want, so long as it's green.
+        }
+    }
+
+    // Set the buffer parameters for SwitchBlade LCD
+    memset(&bp, 0, sizeof(RZSBSDK_BUFFERPARAMS));
+    bp.pData = (BYTE *)g_rgb565;
+    bp.DataSize = sNumPixels * sizeof(WORD);
+    bp.PixelType = RGB565;
+
+    ret = RzSBRenderBuffer(RZSBSDK_DISPLAY_DK_1, &bp);
+}
+
+// FIXME: move to screen render? keep?
 /**
 * visRender
 * This is the main loop that renders visualizations to the display. In the demo implementation
@@ -437,6 +689,16 @@ int visRender(struct winampVisModule *this_mod)
             this_mod->spectrumData[1][divCount] * DIVSCALE)  * AMPLITUDE);
     }
 
+    divCount = 0;
+    while (this_mod->spectrumData[0][divCount] > 7 && divCount < 30){
+        divCount++;
+        if (divCount == 29){
+            setBeatKeep();
+        }
+    }
+
+    //setBeatKeepEx(this_mod->spectrumData);
+
     drawNextPixels = limitBuffer[divCount] > row;
 
     // Traverse the display space and set pixels.
@@ -499,9 +761,13 @@ int visRender(struct winampVisModule *this_mod)
 
     free(g_rgb565);
 
+    //
+    renderToKeys();
+
     return 0;
 }
 
+// FIXME: keep?
 void visQuit(struct winampVisModule *this_mod)
 {
     // disable OpenGL
@@ -526,6 +792,7 @@ void visQuit(struct winampVisModule *this_mod)
     UnregisterClass(VIS_USER_CLASS,this_mod->hDllInstance); // unregister window class
 }
 
+// FIXME: keep?
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)

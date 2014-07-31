@@ -59,6 +59,10 @@ running the plugin.
 #### Troubleshooting ####
   1. If you're having trouble during the Linker steps, try this: Right click on the project -> Properties, select Configuration Properties -> Linker -> Input and set it to: `kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)`
 
+Todo:
+=========
+* Add UI to launch the app from Razer default UI
+* Add way to exit the app
 
 Changes:
 =========

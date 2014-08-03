@@ -63,6 +63,7 @@ Todo:
 =========
 * Add UI to launch the app from Razer default UI
 * Add way to exit the app
+* Package images within DLL
 
 Changes:
 =========

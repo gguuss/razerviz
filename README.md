@@ -34,6 +34,9 @@ running the plugin.
 
 ### Compiling ###
 
+#### UPDATE 2015 ####
+The SDK has changed so the following is deprecated. I will update the instructions soon but for now, start where I'm starting, the [Switchblade UI (SBUI)](http://developer.razerzone.com/sbui/sbui-sdk/) portal, Razer has seriously upped their developer experience game! If you get the plugin working with the release SDK, please subut a pull request.
+
 #### Prerequisites ####
 1. Register for the Razer developer program here:
     http://developer.razerzone.com/forum/register.php

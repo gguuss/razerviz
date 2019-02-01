@@ -1,4 +1,4 @@
-#Razer Keyboard Winamp Visualizer#
+# Razer Keyboard Winamp Visualizer
 
 This is my attempt to create a Winamp visualization that works with
 the Razer Deathstriker Ultimate keyboard.
@@ -14,9 +14,9 @@ See the demo in action:
 - http://youtu.be/Z_O2et62Ivo
 - http://youtu.be/3S0_FtytXCk
 
-##Usage##
+## Usage
 
-###Playback###
+### Playback
 I'm not certain of this but you most likely will need to have the Razer SwitchBlade SDK
 to begin. Please comment if the plugin works for you without the SDK.
 
